@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Enumeration;
+import java.util.*;
 
 @Controller
 @RequestMapping("/alpha")
@@ -100,5 +100,42 @@ public class AlphaController {
     }
 
     //response with json(async request)
+    @RequestMapping(path = "/emp", method = RequestMethod.GET)
+    @ResponseBody
+    public Map<String, Object> getEmp(){
+        Map<String, Object> emp = new HashMap<>();
+        emp.put("name","Lau Kin Tung");
+        emp.put("age", 24);
+        emp.put("salary",8000);
+        return emp;
+    }
 
+    @RequestMapping(path = "/emps", method = RequestMethod.GET)
+    @ResponseBody
+    public List<Map<String, Object>> getEmps(){
+        List<Map<String, Object>> list = new ArrayList<>();
+
+        Map<String, Object> emp = new HashMap<>();
+        emp.put("name","Lau Kin Tung");
+        emp.put("age", 24);
+        emp.put("salary",8000);
+
+        list.add(emp);
+
+        emp = new HashMap<>();
+        emp.put("name","Lau Kin Tung2");
+        emp.put("age", 24);
+        emp.put("salary",9000);
+
+        list.add(emp);
+
+        emp = new HashMap<>();
+        emp.put("name","Lau Kin Tung3");
+        emp.put("age", 24);
+        emp.put("salary",10000);
+
+        list.add(emp);
+
+        return list;
+    }
 }
