@@ -1,13 +1,15 @@
 package com.nowcoder.community;
 
+import com.nowcoder.community.dao.DiscuentPostMapper;
 import com.nowcoder.community.dao.UserMapper;
+import com.nowcoder.community.entity.DiscussPost;
 import com.nowcoder.community.entity.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 
-import java.util.Date;
+import java.util.*;
 
 @SpringBootTest
 @ContextConfiguration(classes = CommunityApplication.class)
@@ -15,6 +17,9 @@ public class MapperTest {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private DiscuentPostMapper discuentPostMapper;
 
     @Test
     public void testSelectUser(){
@@ -54,6 +59,26 @@ public class MapperTest {
         rows = userMapper.updatePassword(150, "hello");
         System.out.println(rows);
     }
+
+    @Test
+    public void testSelectPost(){
+        List<DiscussPost> list = discuentPostMapper.selectDiscussPost(0, 0, 10);
+        List<Map<String, Object>> discussPosts = new ArrayList<>();
+        if (list != null) {
+            for (DiscussPost post : list) {
+                System.out.println(post);
+                Map<String, Object> map = new HashMap<>();
+                map.put("post", post);
+                User user = userMapper.selectById(post.getUserId());
+                System.out.println(user);
+                map.put("user", user);
+                discussPosts.add(map);
+            }
+        }
+    }
+
+
+
 
 
 
