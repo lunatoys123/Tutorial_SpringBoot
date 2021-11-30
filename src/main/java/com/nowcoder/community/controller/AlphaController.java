@@ -100,5 +100,5 @@ public class AlphaController {
     }
 
     //response with json(async request)
-    
+
 }
