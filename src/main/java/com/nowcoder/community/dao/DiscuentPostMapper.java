@@ -10,7 +10,7 @@ import java.util.List;
 public interface DiscuentPostMapper {
 
     List<DiscussPost> selectDiscussPost(int userId, int offset, int limit);
-    //@param use when only one parameter
+    //@param use when only one parameter and appear in <if> in mybatis
     int selectDiscussPostRows(@Param("userId") int userId);
 
 
