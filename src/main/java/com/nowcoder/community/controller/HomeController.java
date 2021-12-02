@@ -3,6 +3,7 @@ package com.nowcoder.community.controller;
 import com.nowcoder.community.Service.DiscussPostService;
 import com.nowcoder.community.Service.UserService;
 import com.nowcoder.community.entity.DiscussPost;
+import com.nowcoder.community.entity.Page;
 import com.nowcoder.community.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,8 +26,14 @@ public class HomeController {
     private UserService userService;
 
     @RequestMapping(path = "/index", method = RequestMethod.GET)
-    public String getIndexPage(Model model) {
-        List<DiscussPost> list = discussPostService.findDiscussPost(0, 0, 10);
+    public String getIndexPage(Model model, Page page) {
+        // model and page will initialize automatically before calling method and inject page to modal
+        // so that thymeleaf can get the data in page directly
+        page.setRows(discussPostService.findDiscussPostRows(0));
+        page.setPath("/index");
+
+
+        List<DiscussPost> list = discussPostService.findDiscussPost(0, page.getOffset(), page.getLimit());
         List<Map<String, Object>> discussPosts = new ArrayList<>();
         if (list != null) {
             for (DiscussPost post : list) {
