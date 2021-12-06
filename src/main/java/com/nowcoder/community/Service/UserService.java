@@ -1,6 +1,8 @@
 package com.nowcoder.community.Service;
 
+import com.nowcoder.community.dao.LoginTicketMapper;
 import com.nowcoder.community.dao.UserMapper;
+import com.nowcoder.community.entity.LoginTicket;
 import com.nowcoder.community.entity.User;
 import com.nowcoder.community.util.CommunityConstant;
 import com.nowcoder.community.util.CommunityUtil;
@@ -34,6 +36,9 @@ public class UserService implements CommunityConstant {
 
     @Value("${server.servlet.context-path}")
     private String contextPath;
+
+    @Autowired
+    private LoginTicketMapper loginTicketMapper;
 
 
     public User findUserById(int id){
@@ -78,7 +83,7 @@ public class UserService implements CommunityConstant {
 
         // Register user
         user.setSalt(CommunityUtil.generateUUID().substring(0,5));
-        user.setPassword(CommunityUtil.md5(user.getPassword())+user.getSalt());
+        user.setPassword(CommunityUtil.md5(user.getPassword()+user.getSalt()));
         user.setType(0);
         user.setStatus(0);
         user.setActivationCode(CommunityUtil.generateUUID());
@@ -109,6 +114,61 @@ public class UserService implements CommunityConstant {
         }else{
             return ACTIVATION_FAILURE;
         }
+    }
+
+    public Map<String, Object> login(String username, String password, int expiredSeconds){
+        Map<String, Object> map = new HashMap<>();
+
+        if(StringUtils.isBlank(username)){
+            map.put("usernameMsg", "username cannot be null");
+            return map;
+        }
+
+        if(StringUtils.isBlank(password)){
+            map.put("passwordMsg","password cannot be null");
+            return map;
+        }
+
+        //check username
+        User user = userMapper.selectByName(username);
+        System.out.println(user);
+        if(user==null){
+            map.put("usernameMsg", "username not exist");
+            return map;
+        }
+
+        //check status
+        if(user.getStatus() == 0){
+            map.put("usernameMsg", "user not activate");
+            return map;
+        }
+
+        //check password
+        password = CommunityUtil.md5(password+user.getSalt());
+        System.out.println(password);
+        if(!user.getPassword().equals(password)){
+            map.put("passwordMsg","wrong password");
+            return map;
+        }
+
+        // generate login certificate
+        LoginTicket loginTicket = new LoginTicket();
+        loginTicket.setUserId(user.getId());
+        loginTicket.setTicket(CommunityUtil.generateUUID());
+        loginTicket.setStatus(0);
+        loginTicket.setExpired(new Date(System.currentTimeMillis() + expiredSeconds * 1000));
+        loginTicketMapper.insertLoginTicket(loginTicket);
+
+        map.put("ticket", loginTicket.getTicket());
+        return map;
+    }
+
+    public void logout(String ticket){
+        loginTicketMapper.updateStatus(ticket, 1);
+    }
+
+    public LoginTicket findLoginTicket(String ticket){
+        return loginTicketMapper.selectByTicket(ticket);
     }
 
 }
