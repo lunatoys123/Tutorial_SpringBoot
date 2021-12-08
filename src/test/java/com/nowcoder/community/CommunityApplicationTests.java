@@ -36,8 +36,10 @@ class CommunityApplicationTests implements ApplicationContextAware {
 
 	@Test
 	public void testBeanManagement(){
+		System.out.println(applicationContext.getType("KaptchaProducer"));
 		AlphaService alphaService = applicationContext.getBean(AlphaService.class);
 		System.out.println(alphaService);
+
 	}
 
 	@Test

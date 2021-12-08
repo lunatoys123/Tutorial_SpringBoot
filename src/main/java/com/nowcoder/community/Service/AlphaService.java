@@ -8,7 +8,6 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
 @Service
-
 public class AlphaService {
     @Autowired
     private AlphaDao alphaDao;
