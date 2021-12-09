@@ -13,6 +13,8 @@ public interface DiscuentPostMapper {
     //@param use when only one parameter and appear in <if> in mybatis
     int selectDiscussPostRows(@Param("userId") int userId);
 
+    int insertDiscussPost(DiscussPost discussPost);
+
 
 
 }
