@@ -38,4 +38,8 @@ public class DiscussPostService {
 
         return discuentPostMapper.insertDiscussPost(post);
     }
+
+    public DiscussPost findDiscussPostById(int id){
+        return discuentPostMapper.selectDiscussPostById(id);
+    }
 }

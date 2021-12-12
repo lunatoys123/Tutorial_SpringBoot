@@ -1,12 +1,15 @@
 package com.nowcoder.community.controller;
 
 import com.nowcoder.community.Service.DiscussPostService;
+import com.nowcoder.community.Service.UserService;
 import com.nowcoder.community.entity.DiscussPost;
 import com.nowcoder.community.entity.User;
 import com.nowcoder.community.util.CommunityUtil;
 import com.nowcoder.community.util.HostHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -23,6 +26,9 @@ public class DiscussPostController {
     @Autowired
     private HostHolder hostHolder;
 
+    @Autowired
+    private UserService userService;
+
     @RequestMapping(path = "/add", method = RequestMethod.POST)
     @ResponseBody
     public String addDiscussPost(String title, String content){
@@ -38,5 +44,16 @@ public class DiscussPostController {
         post.setCreateTime(new Date());
         discussPostService.AddDiscussPost(post);
         return CommunityUtil.getJSONString(0, "Add Post successfully");
+    }
+
+    @RequestMapping(path = "/detail/{discussPostId}", method = RequestMethod.GET)
+    public String getDiscussPost(@PathVariable("discussPostId") int discussPostId, Model model){
+        DiscussPost post = discussPostService.findDiscussPostById(discussPostId);
+        model.addAttribute("post", post);
+
+        User user= userService.findUserById(post.getUserId());
+        model.addAttribute("user", user);
+
+        return "/site/discuss-detail";
     }
 }

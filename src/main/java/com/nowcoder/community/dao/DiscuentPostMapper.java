@@ -15,6 +15,8 @@ public interface DiscuentPostMapper {
 
     int insertDiscussPost(DiscussPost discussPost);
 
+    DiscussPost selectDiscussPostById(int id);
+
 
 
 }
