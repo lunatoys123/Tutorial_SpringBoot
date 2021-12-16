@@ -6,6 +6,9 @@
     <sql id="selectField">
         id, from_id, to_id, conversation_id, content, status, create_time
     </sql>
+    <sql id="InsertField">
+        from_id, to_id, conversation_id, content, status, create_time
+    </sql>
     <select id="selectConversation" resultType="Message">
         select <include refid="selectField"></include> from message
         where id in (
@@ -55,5 +58,17 @@
             and conversation_id = #{conversationId}
         </if>
     </select>
+
+    <insert id="insertMessage" keyProperty="id" parameterType="Message">
+        insert into message (<include refid="InsertField"></include>)
+        values(#{fromId},#{toId},#{conversationId},#{content},#{status},#{createTime})
+    </insert>
+    <update id="updateStatus">
+        update message set status = ${status}
+        where id in
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
 
 </mapper>
