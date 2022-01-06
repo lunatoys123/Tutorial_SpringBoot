@@ -1,8 +1,11 @@
 package com.nowcoder.community.controller;
 
+import com.nowcoder.community.Service.FollowService;
+import com.nowcoder.community.Service.LikeService;
 import com.nowcoder.community.Service.UserService;
 import com.nowcoder.community.annotation.LoginRequired;
 import com.nowcoder.community.entity.User;
+import com.nowcoder.community.util.CommunityConstant;
 import com.nowcoder.community.util.CommunityUtil;
 import com.nowcoder.community.util.HostHolder;
 import org.apache.commons.lang3.StringUtils;
@@ -25,7 +28,7 @@ import java.io.OutputStream;
 
 @Controller
 @RequestMapping("/user")
-public class userController {
+public class userController implements CommunityConstant {
 
     private static final Logger logger = LoggerFactory.getLogger(userController.class);
 
@@ -43,6 +46,12 @@ public class userController {
 
     @Autowired
     private HostHolder hostHolder;
+
+    @Autowired
+    private LikeService likeService;
+
+    @Autowired
+    private FollowService followService;
 
     @LoginRequired
     @RequestMapping(path = "/setting", method = RequestMethod.GET)
@@ -92,7 +101,7 @@ public class userController {
         response.setContentType("image/" + suffix);
         try (FileInputStream fis = new FileInputStream(fileName);
              OutputStream os = response.getOutputStream();
-        ){
+        ) {
 
             byte[] buffer = new byte[1024];
             int b = 0;
@@ -102,6 +111,36 @@ public class userController {
         } catch (IOException e) {
             logger.error("Read header Image failed: " + e.getMessage());
         }
+
+    }
+
+    @RequestMapping(path = "/profile/{userId}", method = RequestMethod.GET)
+    public String getProfilePage(@PathVariable("userId") int userId, Model model) {
+        User user = userService.findUserById(userId);
+        if (user == null) {
+            throw new RuntimeException("user not exist");
+        }
+
+        model.addAttribute("user", user);
+
+        int likeCount = likeService.findUserLikeCount(userId);
+        model.addAttribute("likeCount", likeCount);
+
+        long followeeCount = followService.findFolloweeCount(userId, ENTITY_TYPE_USER);
+        model.addAttribute("followeeCount", followeeCount);
+
+        long followerCount = followService.findFollowerCount(ENTITY_TYPE_USER, userId);
+        model.addAttribute("followerCount", followerCount);
+
+        boolean hasFollowed = false;
+
+        if(hostHolder.getUser() != null){
+            hasFollowed = followService.hasFollowed(hostHolder.getUser().getId(), ENTITY_TYPE_USER, userId);
+        }
+
+        model.addAttribute("hasFollowed", hasFollowed);
+
+        return "/site/profile";
 
     }
 
