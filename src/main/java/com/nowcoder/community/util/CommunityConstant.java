@@ -2,18 +2,18 @@ package com.nowcoder.community.util;
 
 public interface CommunityConstant {
 
-    int ACTIVATION_SUCCESS=0;
+    int ACTIVATION_SUCCESS = 0;
 
     /**
-     *  Repeat activation
+     * Repeat activation
      */
 
-    int ACTIVATION_REPEAT=01;
+    int ACTIVATION_REPEAT = 01;
 
     /**
      * Activation fail
      */
-    int ACTIVATION_FAILURE=02;
+    int ACTIVATION_FAILURE = 02;
 
     /**
      *
@@ -33,4 +33,11 @@ public interface CommunityConstant {
 
     int ENTITY_TYPE_USER = 3;
 
+    String TOPIC_COMMENT = "comment";
+
+    String TOPIC_LIKE = "like";
+
+    String TOPIC_FOLLOW = "follow";
+
+    int SYSTEM_USER_ID = 1;
 }
